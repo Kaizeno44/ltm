@@ -1,31 +1,28 @@
 <?php
 include '../includes/connect.php';
+
 $name = htmlspecialchars($_POST['name']);
 $username = htmlspecialchars($_POST['username']);
 $password = htmlspecialchars($_POST['password']);
-$phone = $_POST['phone'];
+$phone = htmlspecialchars($_POST['phone']);
 
-function number($length) {
-    $result = '';
-
-    for($i = 0; $i < $length; $i++) {
-        $result .= mt_rand(0, 9);
-    }
-
-    return $result;
+// ⚙️ Kiểm tra dữ liệu cơ bản
+if (empty($name) || empty($username) || empty($password) || empty($phone)) {
+    die("Vui lòng nhập đầy đủ thông tin đăng ký!");
 }
 
-$sql = "INSERT INTO users (name, username, password, contact) VALUES ('$name', '$username', '$password', $phone);";
-if($con->query($sql)==true){
-$user_id =  $con->insert_id;
-$sql = "INSERT INTO wallet(customer_id) VALUES ($user_id)";
-if($con->query($sql)==true){
-	$wallet_id =  $con->insert_id;
-	$cc_number = number(16);
-	$cvv_number = number(3);
-	$sql = "INSERT INTO wallet_details(wallet_id, number, cvv) VALUES ($wallet_id, $cc_number, $cvv_number)";
-	$con->query($sql);
+// ✅ Mã hóa mật khẩu an toàn
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+// ✅ Thêm người dùng mới vào bảng users
+$sql = "INSERT INTO users (name, username, password, contact) 
+        VALUES ('$name', '$username', '$hashedPassword', '$phone')";
+
+if ($con->query($sql) === TRUE) {
+    // Đăng ký thành công → chuyển sang trang đăng nhập
+    header("Location: ../login.php");
+    exit;
+} else {
+    echo "Lỗi khi đăng ký: " . $con->error;
 }
-}
-header("location: ../login.php");
 ?>

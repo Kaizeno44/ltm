@@ -1,52 +1,46 @@
 <?php
 include '../includes/connect.php';
-$success=false;
+session_start();
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+$username = trim($_POST['username']);
+$password = trim($_POST['password']);
 
-$result = mysqli_query($con, "SELECT * FROM users WHERE username='$username' AND password='$password' AND role='Administrator' AND not deleted;");
-while($row = mysqli_fetch_array($result))
-{
-	$success = true;
-	$user_id = $row['id'];
-	$name = $row['name'];
-	$role= $row['role'];
-}
-if($success == true)
-{	
-	session_start();
-	$_SESSION['admin_sid']=session_id();
-	$_SESSION['user_id'] = $user_id;
-	$_SESSION['role'] = $role;
-	$_SESSION['name'] = $name;
+$success = false;
 
-	header("location: ../admin-page.php");
+// ✅ Truy vấn người dùng theo username
+$sql = "SELECT * FROM users WHERE username = ? AND deleted = 0 LIMIT 1";
+$stmt = $con->prepare($sql);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    // ✅ Kiểm tra mật khẩu (đã mã hóa trong DB)
+    if (password_verify($password, $row['password'])) {
+        $success = true;
+        $user_id = $row['id'];
+        $name = $row['name'];
+        $role = $row['role'];
+    }
 }
-else
-{
-	$result = mysqli_query($con, "SELECT * FROM users WHERE username='$username' AND password='$password' AND role='Customer' AND not deleted;");
-	while($row = mysqli_fetch_array($result))
-	{
-	$success = true;
-	$user_id = $row['id'];
-	$name = $row['name'];
-	$role= $row['role'];
-	}
-	if($success == true)
-	{
-		session_start();
-		$_SESSION['customer_sid']=session_id();
-		$_SESSION['user_id'] = $user_id;
-		$_SESSION['role'] = $role;
-		$_SESSION['name'] = $name;			
-		header("location: ../index.php");
-	}
-	else
-	{
-		header("location: ../login.php");
-	}
+
+if ($success) {
+    // ✅ Lưu session tùy theo vai trò
+    if ($role === 'Administrator') {
+        $_SESSION['admin_sid'] = session_id();
+        header("Location: ../admin-page.php");
+    } else {
+        $_SESSION['customer_sid'] = session_id();
+        header("Location: ../index.php");
+    }
+
+    $_SESSION['user_id'] = $user_id;
+    $_SESSION['role'] = $role;
+    $_SESSION['name'] = $name;
+    exit;
+} else {
+    // ❌ Sai tài khoản hoặc mật khẩu
+    header("Location: ../login.php?error=1");
+    exit;
 }
-$con = new mysqli($servername, $server_user, $server_pass, $dbname);
-$con->set_charset("utf8mb4");
 ?>
