@@ -1,6 +1,9 @@
 <?php
 include 'includes/connect.php';
-
+if (!isset($_SESSION['user_id'])) {
+  header("location:login.php");
+  exit();
+}
 if ($_SESSION['admin_sid'] == session_id()) {
 ?>
 <!DOCTYPE html>
@@ -186,7 +189,7 @@ if ($_SESSION['admin_sid'] == session_id()) {
   </div>
 
   <!-- JS -->
-  <script src="js/plugins/jquery-1.11.2.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
   <script src="js/materialize.min.js"></script>
   <script>
     $(document).ready(function(){

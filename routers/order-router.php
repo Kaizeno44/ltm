@@ -18,6 +18,9 @@ $sql = "INSERT INTO orders (customer_id, payment_type, address, total, descripti
 
 if ($con->query($sql) === TRUE) {
     $order_id = $con->insert_id;
+    // Gửi tín hiệu đến Socket Server (port 3001) báo có đơn hàng mới
+    $message = "Khách hàng ID #$user_id vừa đặt đơn hàng mới (Mã đơn: $order_id)";
+    @file_get_contents("http://localhost:3001/new-order?msg=" . urlencode($message));
 
     foreach ($_POST as $key => $value) {
         if (is_numeric($key)) {
@@ -33,7 +36,7 @@ if ($con->query($sql) === TRUE) {
         }
     }
 
-    // 🧹 ĐÃ XÓA phần ví điện tử (wallet) ở đây
+  
 
     header("location: ../orders.php");
     exit;

@@ -1,5 +1,20 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 include 'includes/connect.php';
+
+if (!isset($_SESSION['user_id'])) {
+  header("location:login.php");
+  exit();
+}
+$user_id = $_SESSION['user_id'];
+
+
+// var_dump($_SESSION);
+// exit;
+
 
 if($_SESSION['customer_sid']==session_id())
 {
@@ -37,6 +52,13 @@ if($_SESSION['customer_sid']==session_id())
     .input-field label.active{ width:100%; }
   </style> 
 </head>
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+<script>
+  const socket = io("http://localhost:3001"); // 👉 port của Socket Server
+  socket.on("newOrder", (msg) => {  
+    alert("🔔 " + msg);
+  });
+</script>
 
 <body>
   <div id="loader-wrapper">
@@ -57,13 +79,6 @@ if($_SESSION['customer_sid']==session_id())
                 </a> 
                 <span class="logo-text">Logo</span>
               </h1>
-            </li>
-          </ul>
-          <ul class="right hide-on-med-and-down">                        
-            <li>
-              <a href="#" class="waves-effect waves-block waves-light">
-                <i class="mdi-editor-attach-money">Số dư: <?php echo $balance;?></i>
-              </a>
             </li>
           </ul>					
         </div>
@@ -107,9 +122,26 @@ if($_SESSION['customer_sid']==session_id())
                     <?php
                     $sql = mysqli_query($con, "SELECT DISTINCT status FROM orders WHERE customer_id = $user_id;");
                     while($row = mysqli_fetch_array($sql)){
-                      echo '<li><a href="orders.php?status='.$row['status'].'">Đơn hàng '.$row['status'].'</a></li>';
-                    }
-                    ?>
+                       $status_en = $row['status'];
+              switch ($status_en) {
+              case 'Ordered':
+                  $status_vi = 'Đã đặt hàng';
+                  break;
+              case 'Yet to be delivered':
+                  $status_vi = 'Chưa giao hàng';
+                  break;
+              case 'Delivered':
+                  $status_vi = 'Đã giao hàng';
+                  break;
+              case 'Cancelled':
+                  $status_vi = 'Đã hủy';
+                  break;
+              default:
+                  $status_vi = $status_en; // Phòng trường hợp khác
+          }
+          echo '<li><a href="orders.php?status='.$row['status'].'">Đơn hàng '.$status_vi.'</a></li>';
+        }
+        ?>
                   </ul>
                 </div>
               </li>
@@ -124,7 +156,7 @@ if($_SESSION['customer_sid']==session_id())
                   <ul>
                     <li><a href="tickets.php">Tất cả yêu cầu</a></li>
                     <?php
-                    $sql = mysqli_query($con, "SELECT DISTINCT status FROM tickets WHERE poster_id = $user_id AND not deleted;");
+                    $sql = mysqli_query($con, "SELECT DISTINCT status FROM tickets WHERE poster_id = $user_id AND deleted = 0;");
                     while($row = mysqli_fetch_array($sql)){
                       echo '<li><a href="tickets.php?status='.$row['status'].'">Trạng thái: '.$row['status'].'</a></li>';
                     }
@@ -176,7 +208,7 @@ if($_SESSION['customer_sid']==session_id())
 
                   <tbody>
                     <?php
-                    $result = mysqli_query($con, "SELECT * FROM items where not deleted;");
+                    $result = mysqli_query($con, "SELECT * FROM items where  deleted = 0;");
                     while($row = mysqli_fetch_array($result))
                     {
                       echo '<tr><td>'.$row["name"].'</td><td>'.$row["price"].'</td>';                      
@@ -207,23 +239,32 @@ if($_SESSION['customer_sid']==session_id())
     </div>
   </div>
 
-  <!-- Script -->
-  <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>    
-  <script type="text/javascript" src="js/plugins/angular.min.js"></script>
-  <script type="text/javascript" src="js/materialize.min.js"></script>
-  <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-  <script type="text/javascript" src="js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="js/plugins/data-tables/data-tables-script.js"></script>
-  <script type="text/javascript" src="js/plugins/jquery-validation/jquery.validate.min.js"></script>
-  <script type="text/javascript" src="js/plugins/jquery-validation/additional-methods.min.js"></script>
-  <script type="text/javascript" src="js/plugins.min.js"></script>
-  <script type="text/javascript" src="js/custom-script.js"></script>
+ <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+<script src="js/plugins/angular.min.js"></script>
+
+<!-- Materialize CSS -->
+<script src="js/materialize.min.js"></script>
+
+<!-- Plugin dependencies -->
+<script src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script src="js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+<script src="js/plugins/data-tables/data-tables-script.js"></script>
+<script src="js/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="js/plugins/jquery-validation/additional-methods.min.js"></script>
+
+<!-- Materialize main plugin bundle -->
+<script src="js/plugins.min.js"></script>
+
+<!-- Custom script (phải để cuối) -->
+<script src="js/custom-script.js"></script>
 
   <script type="text/javascript">
     $("#formValidate").validate({
       rules: {
         <?php
-        $result = mysqli_query($con, "SELECT * FROM items WHERE NOT deleted;");
+        $result = mysqli_query($con, "SELECT * FROM items WHERE deleted = 0;");
         while($row = mysqli_fetch_array($result)) {
           $safe_id = 'item_' . $row["id"];
           echo '"' . $safe_id . '_name": { required: true, minlength: 5, maxlength: 20 },';
@@ -233,7 +274,7 @@ if($_SESSION['customer_sid']==session_id())
       },
       messages: {
         <?php
-        $result = mysqli_query($con, "SELECT * FROM items WHERE NOT deleted;");
+        $result = mysqli_query($con, "SELECT * FROM items WHERE deleted = 0;");
         while($row = mysqli_fetch_array($result)) {
           $safe_id = 'item_' . $row["id"];
           echo '"' . $safe_id . '_name": { required: "Vui lòng nhập tên món", minlength: "Tối thiểu 5 ký tự", maxlength: "Tối đa 20 ký tự" },';

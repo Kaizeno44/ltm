@@ -1,7 +1,12 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include 'includes/connect.php';
-
+if (!isset($_SESSION['user_id'])) {
+  header("location:login.php");
+  exit();
+}
 // ✅ Kiểm tra nếu người dùng chưa đăng nhập thì quay lại trang login
 if (!isset($_SESSION['customer_sid']) || $_SESSION['customer_sid'] != session_id()) {
     header("location: login.php");
@@ -32,20 +37,86 @@ $stmt->close();
 <html lang="vi">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Chi tiết tài khoản</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>Edit Details</title>
 
-  <!-- CSS -->
-  <link href="css/materialize.css" type="text/css" rel="stylesheet">
-  <link href="css/style.css" type="text/css" rel="stylesheet">
-  <link href="css/custom-style.css" type="text/css" rel="stylesheet">
-  <link href="css/layouts/page-center.css" type="text/css" rel="stylesheet">
+  <!-- Favicons-->
+  <link rel="icon" href="images/favicon/favicon-32x32.png" sizes="32x32">
+  <!-- Favicons-->
+  <link rel="apple-touch-icon-precomposed" href="images/favicon/apple-touch-icon-152x152.png">
+  <!-- For iPhone -->
+  <meta name="msapplication-TileColor" content="#00bcd4">
+  <meta name="msapplication-TileImage" content="images/favicon/mstile-144x144.png">
+  <!-- For Windows Phone -->
+
+
+  <!-- CORE CSS-->
+  <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <link href="css/style.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <!-- Custome CSS-->    
+  <link href="css/custom/custom.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+
+  <!-- INCLUDED PLUGIN CSS ON THIS PAGE -->
+  <link href="js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+   <style type="text/css">
+  .input-field div.error{
+    position: relative;
+    top: -1rem;
+    left: 0rem;
+    font-size: 0.8rem;
+    color:#FF4081;
+    -webkit-transform: translateY(0%);
+    -ms-transform: translateY(0%);
+    -o-transform: translateY(0%);
+    transform: translateY(0%);
+  }
+  .input-field label.active{
+      width:100%;
+  }
+  .left-alert input[type=text] + label:after, 
+  .left-alert input[type=password] + label:after, 
+  .left-alert input[type=email] + label:after, 
+  .left-alert input[type=url] + label:after, 
+  .left-alert input[type=time] + label:after,
+  .left-alert input[type=date] + label:after, 
+  .left-alert input[type=datetime-local] + label:after, 
+  .left-alert input[type=tel] + label:after, 
+  .left-alert input[type=number] + label:after, 
+  .left-alert input[type=search] + label:after, 
+  .left-alert textarea.materialize-textarea + label:after{
+      left:0px;
+  }
+  .right-alert input[type=text] + label:after, 
+  .right-alert input[type=password] + label:after, 
+  .right-alert input[type=email] + label:after, 
+  .right-alert input[type=url] + label:after, 
+  .right-alert input[type=time] + label:after,
+  .right-alert input[type=date] + label:after, 
+  .right-alert input[type=datetime-local] + label:after, 
+  .right-alert input[type=tel] + label:after, 
+  .right-alert input[type=number] + label:after, 
+  .right-alert input[type=search] + label:after, 
+  .right-alert textarea.materialize-textarea + label:after{
+      right:70px;
+  }
+  </style> 
 </head>
-
 <body class="cyan">
 
-  <header>
-    <?php include 'includes/header-customer.php'; ?>
+  <header id="header" class="page-topbar">
+        <!-- start header nav-->
+        <div class="navbar-fixed">
+            <nav class="navbar-color">
+                <div class="nav-wrapper">
+                    <ul class="left">                      
+                      <li><h1 class="logo-wrapper"><a href="index.php" class="brand-logo darken-1"><img src="images/logo.png" alt="logo"></a> <span class="logo-text">Logo</span></h1></li>
+                    </ul>				
+                </div>
+            </nav>
+        </div>
+        <!-- end header nav-->
   </header>
 
   <main>
@@ -57,7 +128,7 @@ $stmt->close();
             <img src="images/user-bg.jpg" alt="user background">
           </div>
           <figure class="card-profile-image">
-            <img src="images/avatar.png" alt="profile image" class="circle z-depth-2 responsive-img activator">
+            <img src="images/avatar.jpg" alt="profile image" class="circle z-depth-2 responsive-img activator">
           </figure>
           <div class="card-content">
             <div class="row">
@@ -112,7 +183,7 @@ $stmt->close();
   </main>
 
   <!-- JS -->
-  <script src="js/plugins/jquery-1.11.2.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
   <script src="js/materialize.min.js"></script>
   <script src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
   <script src="js/plugins.min.js"></script>

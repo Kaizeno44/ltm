@@ -1,6 +1,11 @@
 <?php
 include 'includes/connect.php';
-include 'includes/wallet.php';
+if (!isset($_SESSION['user_id'])) {
+  header("location:login.php");
+  exit();
+}
+$user_id = $_SESSION['user_id'];
+
 $total = 0;
 if($_SESSION['customer_sid']==session_id())
 {
@@ -40,10 +45,12 @@ if($_SESSION['customer_sid']==session_id())
     <nav class="navbar-color">
       <div class="nav-wrapper">
         <ul class="left">                      
-          <li><h1 class="logo-wrapper"><a href="index.php" class="brand-logo darken-1"><img src="images/materialize-logo.png" alt="logo"></a></h1></li>
+          <li><h1 class="logo-wrapper"><a href="index.php" class="brand-logo darken-1"><img src="images/logo.png" alt="logo"></a></h1></li>
         </ul>
-        <ul class="right hide-on-med-and-down">                        
-          <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-editor-attach-money"><?php echo $balance;?></i></a></li>
+        <ul class="right hide-on-med-and-down">    
+          <li><a href="#" class="waves-effect waves-block waves-light">
+  <i class="mdi-editor-attach-money">0 VNĐ</i>
+</a></li>                    
         </ul>						
       </div>
     </nav>
@@ -150,7 +157,7 @@ if($_SESSION['customer_sid']==session_id())
 
 
 <!-- Scripts -->
-<script type="text/javascript" src="js/plugins/jquery-1.11.2.min.js"></script>    
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script type="text/javascript" src="js/materialize.min.js"></script>
 <script type="text/javascript" src="js/plugins.min.js"></script>
 <script type="text/javascript" src="js/custom-script.js"></script>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3307
--- Thời gian đã tạo: Th10 10, 2025 lúc 03:33 PM
+-- Thời gian đã tạo: Th10 11, 2025 lúc 03:21 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -128,46 +128,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role`, `name`, `username`, `password`, `email`, `address`, `contact`, `verified`, `deleted`) VALUES
-(1, 'Customer', 'hehehe', 'admin', '123456', NULL, NULL, 925931331, 0, 0);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `wallet`
---
-
-CREATE TABLE `wallet` (
-  `id` int(11) NOT NULL,
-  `customer_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `wallet`
---
-
-INSERT INTO `wallet` (`id`, `customer_id`) VALUES
-(1, 1);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `wallet_details`
---
-
-CREATE TABLE `wallet_details` (
-  `id` int(11) NOT NULL,
-  `wallet_id` int(11) NOT NULL,
-  `number` varchar(32) DEFAULT NULL,
-  `cvv` int(11) DEFAULT NULL,
-  `balance` int(11) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `wallet_details`
---
-
-INSERT INTO `wallet_details` (`id`, `wallet_id`, `number`, `cvv`, `balance`) VALUES
-(1, 1, '220259555611793', 694, 0);
+(1, 'Customer', 'hehehe', 'admin', '123456', NULL, NULL, 925931331, 0, 0),
+(4, 'Customer', 'nguyen', 'adu123', '$2y$10$glHrslT6O0tJFQXKsYQ50Oc.RLFpATfJ9ARwSHWqRiuwWl/KYGoGO', NULL, NULL, 1233456789, 0, 0);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -218,20 +180,6 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- Chỉ mục cho bảng `wallet`
---
-ALTER TABLE `wallet`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `customer_id` (`customer_id`);
-
---
--- Chỉ mục cho bảng `wallet_details`
---
-ALTER TABLE `wallet_details`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `wallet_id` (`wallet_id`);
-
---
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -269,19 +217,7 @@ ALTER TABLE `ticket_details`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT cho bảng `wallet`
---
-ALTER TABLE `wallet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT cho bảng `wallet_details`
---
-ALTER TABLE `wallet_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -312,18 +248,6 @@ ALTER TABLE `tickets`
 ALTER TABLE `ticket_details`
   ADD CONSTRAINT `ticket_details_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`),
   ADD CONSTRAINT `ticket_details_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-
---
--- Các ràng buộc cho bảng `wallet`
---
-ALTER TABLE `wallet`
-  ADD CONSTRAINT `wallet_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`id`);
-
---
--- Các ràng buộc cho bảng `wallet_details`
---
-ALTER TABLE `wallet_details`
-  ADD CONSTRAINT `wallet_details_ibfk_1` FOREIGN KEY (`wallet_id`) REFERENCES `wallet` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

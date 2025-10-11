@@ -1,6 +1,9 @@
 <?php
 include 'includes/connect.php';
-
+if (!isset($_SESSION['user_id'])) {
+  header("location:login.php");
+  exit();
+}
 if ($_SESSION['customer_sid'] == session_id()) {
 ?>
 <!DOCTYPE html>
@@ -21,6 +24,21 @@ if ($_SESSION['customer_sid'] == session_id()) {
   <link href="js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
  
 </head>
+<!-- Socket.IO client -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  // Kết nối tới Socket server (port 3001)
+  const socket = io("http://localhost:3001");
+
+  // Khi server phát sự kiện "new-order"
+  socket.on("new-order", (msg) => {
+    // Thông báo popup
+    alert("📦 " + msg);
+    
+    // (Tuỳ chọn) Có thể tự động reload danh sách đơn hàng:
+    // location.reload();
+  });
+</script>
 
 <body>
   <!-- Thanh menu -->
@@ -45,6 +63,24 @@ if ($_SESSION['customer_sid'] == session_id()) {
       $result = mysqli_query($con, "SELECT * FROM orders WHERE customer_id=" . $_SESSION['user_id'] . " ORDER BY id DESC;");
       if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
+          $status_en = $row['status'];
+          switch ($status_en) {
+              case 'Ordered':
+                  $status_vi = 'Đã đặt hàng';
+                  break;
+              case 'Yet to be delivered':
+                  $status_vi = 'Chưa giao hàng';
+                  break;
+              case 'Delivered':
+                  $status_vi = 'Đã giao hàng';
+                  break;
+              case 'Cancelled':
+                  $status_vi = 'Đã hủy';
+                  break;
+              default:
+                  $status_vi = $status_en; // Phòng trường hợp khác
+          }
+
           echo '
           <div class="card">
             <div class="card-content">
@@ -52,7 +88,7 @@ if ($_SESSION['customer_sid'] == session_id()) {
               <p><strong>Ngày đặt:</strong> ' . $row['date'] . '</p>
               <p><strong>Tổng tiền:</strong> ' . $row['total'] . ' VNĐ</p>
               <p><strong>Hình thức thanh toán:</strong> Thanh toán khi nhận hàng</p>
-              <p><strong>Trạng thái:</strong> ' . $row['status'] . '</p>
+              <p><strong>Trạng thái:</strong> ' . $status_vi . '</p>
             </div>';
 
           if ($row['status'] == 'Ordered') {
