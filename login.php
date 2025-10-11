@@ -1,5 +1,6 @@
 <?php  
 session_start(); 
+
 if(isset($_SESSION['admin_sid']) || isset($_SESSION['customer_sid']))
 {
 	header("location:index.php");
@@ -35,7 +36,7 @@ else{
 
 <body class="cyan">
   <!-- Start Page Loading -->
-  <div id="loader-wrapper">
+  <div id="loader-wrapper"> 
       <div id="loader"></div>        
       <div class="loader-section section-left"></div>
       <div class="loader-section section-right"></div>

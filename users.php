@@ -26,7 +26,7 @@ if ($_SESSION['admin_sid'] == session_id()) {
       <nav class="navbar-color red lighten-1">
         <div class="nav-wrapper">
           <ul class="left">
-            <li><h1 class="logo-wrapper"><a href="index.php" class="brand-logo">Food Order</a></h1></li>
+            <li><h1 class="logo-wrapper"><a href="index.php" class="brand-logo"><img src="images/logo.png" alt="logo"></a></h1></li>
           </ul>
         </div>
       </nav>
