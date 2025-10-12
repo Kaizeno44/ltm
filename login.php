@@ -77,8 +77,6 @@ else{
     </div>
   </div>
 
-  <!-- SCRIPTS -->
-    <!-- jQuery Library -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script type="text/javascript" src="js/plugins/jquery-validation/jquery.validate.min.js"></script>

@@ -49,7 +49,6 @@ if($_SESSION['customer_sid']==session_id())
         </ul>
         <ul class="right hide-on-med-and-down">    
           <li><a href="#" class="waves-effect waves-block waves-light">
-  <i class="mdi-editor-attach-money">0 VNĐ</i>
 </a></li>                    
         </ul>						
       </div>
