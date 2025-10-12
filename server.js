@@ -24,13 +24,3 @@ http.listen(3001, () => {
   console.log("🚀 Socket server chạy tại http://localhost:3001");
 });
 
-app.get("/new-support", (req, res) => {
-  const supportMsg = req.query.msg || "Có yêu cầu hỗ trợ mới!";
-  io.emit("newSupport", supportMsg);
-  console.log("💬 Thông báo hỗ trợ:", supportMsg);
-  res.send("Đã gửi thông báo hỗ trợ!");
-});
-
-http.listen(3001, () => {
-  console.log("🚀 Socket server chạy tại http://localhost:3001");
-});

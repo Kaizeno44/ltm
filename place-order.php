@@ -119,17 +119,19 @@ if($_SESSION['customer_sid']==session_id())
             <p><strong>Tên:</strong> '.$name.'</p>
             <p><strong>Số liên hệ:</strong> '.$contact.'</p>
             <a href="#" class="secondary-content"><i class="mdi-action-grade"></i></a>';
-
+          $total = 0; // Tổng cộng
           foreach ($_POST as $key => $value)
           {
             if(is_numeric($key)){
               $result = mysqli_query($con, "SELECT * FROM items WHERE id = $key");
               while($row = mysqli_fetch_array($result)){
-                $price = $row['price'];
+                $price = (float)$row['price'];
                 $item_name = $row['name'];
                 $item_id = $row['id'];
               }
-              $price = $value * $price;
+              $value = (int)$value; // số lượng
+              $subtotal = $price * $value;  // Tiền của món này
+
               echo '<li class="collection-item">
                 <div class="row">
                   <div class="col s7"><p><strong>#'.$item_id.'</strong> '.$item_name.'</p></div>
@@ -137,7 +139,7 @@ if($_SESSION['customer_sid']==session_id())
                   <div class="col s3"><span>'.$price.' VNĐ</span></div>
                 </div>
               </li>';
-              $total += $price;
+              $total += $subtotal;
             }
           }
 

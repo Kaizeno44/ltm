@@ -57,7 +57,7 @@ if ($continue) {
             <li><h1 class="logo-wrapper"><a href="index.php" class="brand-logo darken-1"><img src="images/logo.png" alt="logo"></a></h1></li>
           </ul>
           <ul class="right hide-on-med-and-down">
-            <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-editor-attach-money"><?php echo $balance; ?></i></a></li>
+            <li><a href="#" class="waves-effect waves-block waves-light"></a></li>
           </ul>
         </div>
       </nav>

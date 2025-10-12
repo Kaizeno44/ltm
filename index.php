@@ -55,7 +55,7 @@ if($_SESSION['customer_sid']==session_id())
 <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
 <script>
   const socket = io("http://localhost:3001"); // 👉 port của Socket Server
-  socket.on("newOrder", (msg) => {  
+  socket.on("new-order", (msg) => {  
     alert("🔔 " + msg);
   });
 </script>
